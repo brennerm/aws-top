@@ -4,6 +4,18 @@ import datetime as dt
 import boto3
 
 
+def get_user():
+    return boto3.client('sts').get_caller_identity()["Arn"]
+
+
+def get_region():
+    return boto3._get_default_session().region_name
+
+
+def set_region(region):
+    boto3.setup_default_session(region_name=region)
+
+
 class CloudWatch:
     def __init__(self, region):
         self.__cw_client = boto3.client('cloudwatch', region_name=region)

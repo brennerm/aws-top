@@ -1,42 +1,89 @@
-import time
+import collections
 
-from window import WindowManager
+import urwid
 
-import globals
+import aws_top.signals
+from aws_top.popup import GenerousPopUpLauncher, RegionSelectorDialog, ServiceSelectorDialog
+from aws_top.window import StatusWindow, OptionWindow, Option, Ec2Window, S3Window
 
-RENDER_INTERVAL = 1
-UPDATE_INTERVAL = 1
 
+class AwsTop:
+    def __init__(self):
+        services = collections.OrderedDict({
+            'EC2': Ec2Window,
+            'S3': S3Window,
+            'DynamoDB': None
+        })
 
-class AwsEc2Top:
-    keep_running = True
+        def exit_main_loop():
+            raise urwid.ExitMainLoop()
 
-    def __init__(self, region='eu-central-1'):
-        self.__region = region
-        self.__wm = WindowManager()
+        def change_service(w, service):
+            self.service_window.original_widget = services[service]()
+
+        popup_anchor = urwid.BoxAdapter(urwid.SolidFill(), 0)
+        region_selector = RegionSelectorDialog()
+        service_selector = ServiceSelectorDialog(list(services.keys()))
+        region_popup_launcher = GenerousPopUpLauncher(popup_anchor, region_selector)
+        service_popup_launcher = GenerousPopUpLauncher(popup_anchor, service_selector)
+
+        self.status_window = StatusWindow()
+        self.service_window = urwid.Filler(list(services.values())[0](), valign=urwid.TOP)
+        self.option_window = OptionWindow(
+            [
+                Option('Help', lambda: None),
+                Option('Region', lambda: region_popup_launcher.open_pop_up()),
+                Option('Service', lambda: service_popup_launcher.open_pop_up()),
+                Option('Exit', exit_main_loop)
+            ]
+        )
+
+        urwid.connect_signal(service_selector, aws_top.signals.SERVICE_CHANGE, change_service)
+
+        # Layout:
+        # - invisible PopUp launchers
+        # - Status
+        # - Main
+        # - Options
+        self.main_win = urwid.Pile(
+            [
+                ('pack', urwid.Pile([region_popup_launcher, service_popup_launcher])),
+                ('pack', urwid.BoxAdapter(self.status_window, 1)),
+                self.service_window,
+                ('pack', urwid.BoxAdapter(self.option_window, 1))
+            ],
+            focus_item=3
+        )
+
+        palette = [
+            ('error', 'dark red', ''),
+            ('warn', 'yellow', ''),
+            ('f_key', 'bold,white', 'default'),
+            ('options_bg', 'bold', 'dark blue'),
+            ('bold', 'bold', ''),
+            ('popbg', 'white', 'dark blue')
+        ]
+
+        self.__loop = urwid.MainLoop(
+            self.main_win,
+            palette=palette,
+            pop_ups=True
+        )
+        self.__loop.screen.set_terminal_properties(colors=256)
+
+    def update_ui(self, loop, user_data=None):
+        self.status_window.update()
+
+        self.__loop.draw_screen()
+        self.__loop.set_alarm_in(0.1, self.update_ui)
 
     def run(self):
-        last_render_ts = time.time()
-        force_render = True
-
-        while True:
-            key = self.__wm.get_pressed_key()
-            if key != -1:
-                self.__wm.handle_key(key)
-                force_render = True  # force rendering after key stroke
-
-            if not globals.keep_running:
-                break
-
-            if force_render or (time.time() - last_render_ts) > RENDER_INTERVAL:
-                self.__wm.update()
-
-                last_render_ts = time.time()
-                force_render = False
+        self.__loop.set_alarm_in(0.1, self.update_ui)
+        self.__loop.run()
 
 
 def main():
-    AwsEc2Top().run()
+    AwsTop().run()
 
 
 if __name__ == '__main__':
