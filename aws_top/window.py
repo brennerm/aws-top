@@ -108,10 +108,15 @@ class S3Window(urwid.Widget):
     def __init__(self):
         self.__buckets = []
         self.__error = None
+        self.update()
 
-    def _update(self):
-        if self.__buckets is []:
+    def update(self):
+        try:
             self.__buckets = aws_top.aws.S3().get_all_buckets()
+            self.__error = None
+        except botocore.exceptions.ClientError as ex:
+            self.__error = ex.response
+        self._invalidate()
 
     def rows(self, size, focus=False):
         return 1 + max(len(self.__buckets), 1)
@@ -122,11 +127,13 @@ class S3Window(urwid.Widget):
 
         body = []
 
-        headers = ['ID', 'Name', 'State', 'Type', 'AZ']
+        header = [
+            urwid.Text('Name'),
+            urwid.Text('Creation Date', align=urwid.LEFT),
+        ]
 
-        row_format = '{} {} {} {} {}'
         body.append(
-            urwid.Text(('bold', row_format.format(*headers)))
+            urwid.AttrMap(urwid.Columns(header), 'bold')
         )
 
         if len(self.__buckets) == 0:
@@ -134,9 +141,11 @@ class S3Window(urwid.Widget):
 
         for i, bucket in enumerate(self.__buckets, 1):
             body.append(
-                urwid.Text(
-                    row_format.format(
-                    )
+                urwid.Columns(
+                    [
+                        urwid.Text(bucket.name),
+                        urwid.Text(bucket.creation_date.strftime("%Y-%m-%d %H:%M:%S"))
+                    ]
                 )
             )
 
