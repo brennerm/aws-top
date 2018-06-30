@@ -73,6 +73,7 @@ class AwsTop:
 
     def update_ui(self, loop, user_data=None):
         self.status_window.update()
+        self.service_window.original_widget.update()
 
         self.__loop.draw_screen()
         self.__loop.set_alarm_in(1, self.update_ui)
