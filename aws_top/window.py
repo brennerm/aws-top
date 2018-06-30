@@ -50,18 +50,17 @@ class Ec2Window(urwid.Widget):
     _sizing = frozenset([urwid.FLOW])
 
     def __init__(self):
-        # self.__instances = []
         self.__instances = []
         self.__error = None
         self.update()
 
     def update(self):
-        if self.__instances is []:
-            try:
-                self.__instances = aws_top.aws.Ec2().get_all_instances()
-                self.__error = None
-            except botocore.exceptions.ClientError as ex:
-                self.__error = ex.response
+        try:
+            self.__instances = aws_top.aws.Ec2().get_all_instances()
+            self.__error = None
+        except botocore.exceptions.ClientError as ex:
+            self.__error = ex.response
+        self._invalidate()
 
     def rows(self, size, focus=False):
         return 1 + max(len(self.__instances), 1)
