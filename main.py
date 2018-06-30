@@ -75,10 +75,10 @@ class AwsTop:
         self.status_window.update()
 
         self.__loop.draw_screen()
-        self.__loop.set_alarm_in(0.1, self.update_ui)
+        self.__loop.set_alarm_in(1, self.update_ui)
 
     def run(self):
-        self.__loop.set_alarm_in(0.1, self.update_ui)
+        self.__loop.set_alarm_in(1, self.update_ui)
         self.__loop.run()
 
 
