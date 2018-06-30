@@ -126,6 +126,6 @@ class S3:
         self.__s3_client = boto3.resource('s3')
 
     def get_all_buckets(self):
-        buckets = []
+        buckets = list(self.__s3_client.buckets.all())
 
         return buckets
