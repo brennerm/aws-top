@@ -1,13 +1,15 @@
 from setuptools import setup
 
-with open('requirements.txt') as f:
-    required = f.read().splitlines()
-
 setup(
     name='aws-top',
-    version='0.1',
+    version='0.3',
     packages=['aws_top'],
-    install_requires=required,
+    entry_points={
+        'console_scripts': [
+            'aws-top = aws_top.__main__:main',
+        ],
+    },
+    install_requires=['boto3==1.7.20', 'urwid==2.0.1'],
     url='https://github.com/brennerm/aws-top',
     license='MIT',
     author='brennerm',
