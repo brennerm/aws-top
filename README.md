@@ -13,8 +13,18 @@ Currently supported services:
 $ pip install -r requirements.txt
 ```
 
-## Execution
+## Usage
 ```commandline
-aws configure # can be skipped if already configured
+$ aws configure # can be skipped if already configured
+$ python awstop.py -h
+usage: awstop.py [-h] [-a ACCESS_KEY] [-s SECRET_KEY] [-S SESSION_TOKEN]
+                 [-r REGION]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -a ACCESS_KEY, --access-key ACCESS_KEY
+  -s SECRET_KEY, --secret-key SECRET_KEY
+  -S SESSION_TOKEN, --session-token SESSION_TOKEN
+  -r REGION, --region REGION
 $ python awstop.py
 ```
