@@ -1,14 +1,22 @@
+import argparse
 import collections
 
 import urwid
 
 import aws_top.signals
+from aws_top import aws
 from aws_top.popup import GenerousPopUpLauncher, RegionSelectorDialog, ServiceSelectorDialog
 from aws_top.window import StatusWindow, OptionWindow, Option, Ec2Window, S3Window
 
 
 class AwsTop:
-    def __init__(self):
+    def __init__(self, access_key=None, secret_key=None, session_token=None, region=None):
+        if access_key and secret_key or session_token:
+            aws.set_credentials(access_key, secret_key, session_token)
+
+        if region:
+            aws.set_region(region)
+
         services = collections.OrderedDict({
             'EC2': Ec2Window,
             'S3': S3Window,
@@ -84,7 +92,21 @@ class AwsTop:
 
 
 def main():
-    AwsTop().run()
+    argparser = argparse.ArgumentParser()
+
+    argparser.add_argument('-a', '--access-key')
+    argparser.add_argument('-s', '--secret-key')
+    argparser.add_argument('-S', '--session-token')
+    argparser.add_argument('-r', '--region')
+
+    args = argparser.parse_args()
+
+    AwsTop(
+        args.access_key,
+        args.secret_key,
+        args.session_token,
+        args.region
+    ).run()
 
 
 if __name__ == '__main__':

@@ -16,6 +16,14 @@ def set_region(region):
     boto3.setup_default_session(region_name=region)
 
 
+def set_credentials(aws_access_key_id=None, aws_secret_access_key=None, aws_session_token=None):
+    boto3.setup_default_session(
+        aws_access_key_id=aws_access_key_id,
+        aws_secret_access_key=aws_secret_access_key,
+        aws_session_token=aws_session_token
+    )
+
+
 class CloudWatch:
     def __init__(self, region):
         self.__cw_client = boto3.client('cloudwatch', region_name=region)
