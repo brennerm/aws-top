@@ -2,7 +2,7 @@
 
 aws-top is a CLI dashboard for a variety of AWS services.
 
-![EC2 view][img/ec2.png]
+![EC2 view](img/ec2.png)
 
 Currently supported services:
 - EC2
