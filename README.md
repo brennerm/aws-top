@@ -14,8 +14,10 @@ $ pip install -r requirements.txt
 ```
 
 ## Usage
+### Authentication
+Refer to the [boto3 configuration](https://boto3.readthedocs.io/en/latest/guide/configuration.html#credentials) to see all options to provide AWS credentials.
+In general these should be prefered. Alternatively you can use the command line parameters that are listed below.
 ```commandline
-$ aws configure # can be skipped if already configured
 $ python awstop.py -h
 usage: awstop.py [-h] [-a ACCESS_KEY] [-s SECRET_KEY] [-S SESSION_TOKEN]
                  [-r REGION]
@@ -26,5 +28,9 @@ optional arguments:
   -s SECRET_KEY, --secret-key SECRET_KEY
   -S SESSION_TOKEN, --session-token SESSION_TOKEN
   -r REGION, --region REGION
+```
+### Execution
+```commandline
+$ aws configure # can be skipped if already configured
 $ python awstop.py
 ```
