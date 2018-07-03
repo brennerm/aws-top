@@ -9,8 +9,14 @@ Currently supported services:
 - S3
 
 ## Installation
+1.
 ```commandline
-$ pip install -r requirements.txt
+$ pip install aws-top
+```
+2.
+```commandline
+$ git clone https://github.com/brennerm/aws-top && cd aws-top
+$ python setup.py install
 ```
 
 ## Usage
@@ -18,8 +24,8 @@ $ pip install -r requirements.txt
 Refer to the [boto3 configuration](https://boto3.readthedocs.io/en/latest/guide/configuration.html#credentials) to see all options to provide AWS credentials.
 In general these should be prefered. Alternatively you can use the command line parameters that are listed below.
 ```commandline
-$ python awstop.py -h
-usage: awstop.py [-h] [-a ACCESS_KEY] [-s SECRET_KEY] [-S SESSION_TOKEN]
+$ aws-top -h
+usage: awstop [-h] [-a ACCESS_KEY] [-s SECRET_KEY] [-S SESSION_TOKEN]
                  [-r REGION]
 
 optional arguments:
@@ -32,5 +38,5 @@ optional arguments:
 ### Execution
 ```commandline
 $ aws configure # can be skipped if already configured
-$ python awstop.py
+$ aws-top
 ```
