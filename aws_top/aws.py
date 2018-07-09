@@ -96,6 +96,23 @@ class Ec2Instance:
         self.az = az
         self.name = name
 
+    @staticmethod
+    def from_dict(dict_content):
+        name = None
+
+        if 'Tags' in dict_content:
+            for tag in dict_content['Tags']:
+                if tag['Key'] == 'Name':
+                    name = tag['Value']
+
+        return Ec2Instance(
+            dict_content['InstanceId'],
+            dict_content['State']['Name'],
+            dict_content['InstanceType'],
+            dict_content['Placement']['AvailabilityZone'],
+            name
+        )
+
 
 class Ec2:
     def __init__(self):
@@ -105,21 +122,10 @@ class Ec2:
         instances = []
 
         for instance in self.__ec2_client.describe_instances()['Reservations']:
-            name = None
-            instance = instance['Instances'][0]
-
-            if 'Tags' in instance:
-                for tag in instance['Tags']:
-                    if tag['Key'] == 'Name':
-                        name = tag['Value']
-
-            identifier = instance['InstanceId']
-            state = instance['State']['Name']
-            instance_type = instance['InstanceType']
-            az = instance['Placement']['AvailabilityZone']
-
             instances.append(
-                Ec2Instance(identifier, state, instance_type, az, name)
+                Ec2Instance.from_dict(
+                    instance['Instances'][0]
+                )
             )
 
         return instances
