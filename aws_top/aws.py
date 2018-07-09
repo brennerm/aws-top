@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import datetime
 import datetime as dt
 
 import boto3
@@ -124,11 +125,6 @@ class Ec2:
         return instances
 
 
-class S3Bucket:
-    def __init__(self):
-        pass
-
-
 class S3:
     def __init__(self):
         self.__s3_client = boto3.resource('s3')
@@ -137,3 +133,40 @@ class S3:
         buckets = list(self.__s3_client.buckets.all())
 
         return buckets
+
+
+class LambdaFunction:
+    def __init__(self, name, runtime, code_size, memory_size, timeout, last_modified):
+        self.name = name
+        self.runtime = runtime
+        self.code_size = code_size
+        self.memory_size = memory_size
+        self.timeout = timeout
+        self.last_modified = last_modified
+
+    @staticmethod
+    def from_dict(dict_content):
+        last_modified = dict_content['LastModified']
+        last_modified = datetime.datetime.strptime(
+            last_modified,
+            '%Y-%m-%dT%H:%M:%S.%f%z'
+        )
+
+        return LambdaFunction(
+            dict_content['FunctionName'],
+            dict_content['Runtime'],
+            str(dict_content['CodeSize']),
+            str(dict_content['MemorySize']),
+            str(dict_content['Timeout']),
+            last_modified.strftime("%Y-%m-%d %H:%M:%S")
+        )
+
+
+class Lambda:
+    def __init__(self):
+        self.__lambda_client = boto3.client('lambda')
+
+    def get_all_functions(self):
+        return [
+            LambdaFunction.from_dict(func) for func in self.__lambda_client.list_functions()['Functions']
+        ]

@@ -151,6 +151,64 @@ class S3Window(urwid.Widget):
         return urwid.Pile(body).render(size)
 
 
+class LambdaWindow(urwid.Widget):
+    _sizing = frozenset([urwid.FLOW])
+
+    def __init__(self):
+        self.__functions = []
+        self.__error = None
+        self.update()
+
+    def update(self):
+        try:
+            self.__functions = aws_top.aws.Lambda().get_all_functions()
+            self.__error = None
+        except botocore.exceptions.ClientError as ex:
+            self.__error = ex.response
+        self._invalidate()
+
+    def rows(self, size, focus=False):
+        return 1 + max(len(self.__functions), 1)
+
+    def render(self, size, focus=False):
+        if self.__error:
+            return urwid.Text(('error', self.__error), align=urwid.CENTER).render(size)
+
+        body = []
+
+        header = [
+            urwid.Text('Name'),
+            urwid.Text('Runtime', align=urwid.LEFT),
+            urwid.Text('Size', align=urwid.LEFT),
+            urwid.Text('Memory', align=urwid.LEFT),
+            urwid.Text('Timeout', align=urwid.LEFT),
+            urwid.Text('Last Modified', align=urwid.LEFT),
+        ]
+
+        body.append(
+            urwid.AttrMap(urwid.Columns(header), 'bold')
+        )
+
+        if len(self.__functions) == 0:
+            body.append(urwid.Text(('warn', 'No available Lambda functions in this region.'), align=urwid.CENTER))
+
+        for i, func in enumerate(self.__functions, 1):
+            body.append(
+                urwid.Columns(
+                    [
+                        urwid.Text(func.name),
+                        urwid.Text(func.runtime),
+                        urwid.Text(func.code_size),
+                        urwid.Text(func.memory_size),
+                        urwid.Text(func.timeout),
+                        urwid.Text(func.last_modified)
+                    ]
+                )
+            )
+
+        return urwid.Pile(body).render(size)
+
+
 class OptionWindow(urwid.Widget):
     _sizing = frozenset([urwid.BOX])
     _selectable = True

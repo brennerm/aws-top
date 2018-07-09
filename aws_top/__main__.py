@@ -6,7 +6,7 @@ import urwid
 import aws_top.signals
 from aws_top import aws
 from aws_top.popup import GenerousPopUpLauncher, RegionSelectorDialog, ServiceSelectorDialog
-from aws_top.window import StatusWindow, OptionWindow, Option, Ec2Window, S3Window
+from aws_top.window import StatusWindow, OptionWindow, Option, Ec2Window, S3Window, LambdaWindow
 
 
 class AwsTop:
@@ -20,6 +20,7 @@ class AwsTop:
         services = collections.OrderedDict({
             'EC2': Ec2Window,
             'S3': S3Window,
+            'Lambda': LambdaWindow,
             'DynamoDB': None
         })
 

@@ -6,6 +6,7 @@ aws-top is a CLI dashboard for a variety of AWS services.
 
 Currently supported services:
 - EC2
+- Lambda
 - S3
 
 ## Installation
