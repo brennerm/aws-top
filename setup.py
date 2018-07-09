@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='aws-top',
-    version='0.3',
+    version='0.4',
     packages=['aws_top'],
     entry_points={
         'console_scripts': [
