@@ -136,7 +136,7 @@ class S3Window(urwid.Widget):
         )
 
         if len(self.__buckets) == 0:
-            body.append(urwid.Text(('warn', 'No available S3 buckets in this region.'), align=urwid.CENTER))
+            body.append(urwid.Text(('warn', 'No available S3 buckets.'), align=urwid.CENTER))
 
         for i, bucket in enumerate(self.__buckets, 1):
             body.append(
