@@ -23,7 +23,7 @@ $ python setup.py install
 ## Usage
 ### Authentication
 Refer to the [boto3 configuration](https://boto3.readthedocs.io/en/latest/guide/configuration.html#credentials) to see all options to provide AWS credentials.
-In general these should be prefered. Alternatively you can use the command line parameters that are listed below.
+In general these should be preferred. Alternatively you can use the command line parameters that are listed below.
 ```commandline
 $ aws-top -h
 usage: awstop [-h] [-a ACCESS_KEY] [-s SECRET_KEY] [-S SESSION_TOKEN]
