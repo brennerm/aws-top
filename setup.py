@@ -9,7 +9,7 @@ setup(
             'aws-top = aws_top.__main__:main',
         ],
     },
-    install_requires=['boto3==1.7.20', 'urwid==2.0.1'],
+    install_requires=['boto3==1.7.20', 'urwid==4.0.7'],
     url='https://github.com/brennerm/aws-top',
     license='MIT',
     author='brennerm',
